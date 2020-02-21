@@ -3,7 +3,7 @@ import React, { Component } from "react";
 export default class Registrar extends Component {
   render() {
     return (
-      <div class="card">
+      <div className="card">
         <div className="card-header">
           <h5 className="card-title mb-0">Registrar Usuario</h5>
         </div>
@@ -25,7 +25,7 @@ export default class Registrar extends Component {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary btn-block">
               Registrar
             </button>
           </form>
