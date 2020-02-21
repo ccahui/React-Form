@@ -18,23 +18,16 @@ export default class Usuarios extends Component {
     );
   }
 
-  nuevaCita = ({ nombre, apellido, dni, fecha, hora }) => {
+  registrarCita = (data) => {
     const citas = this.state.citas.slice();
 
     const id = this.generarId();
-    const cita = {
-      nombre,
-      apellido,
-      dni,
-      fecha,
-      hora,
-      id
-    };
+    const cita = { id, ...data };
+    console.log(cita);
     citas.push(cita);
-
     this.setState({
       citas
-    });
+    }); 
   };
 
   cancelarCita = id => {
@@ -49,8 +42,8 @@ export default class Usuarios extends Component {
     return (
       <div className="container">
         <div className="row mt-4 justify-content-center">
-          <div className="col-md-6">
-            <Registrar />
+          <div className="col-md-7 col-xl-6">
+            <Registrar registrarCita={this.registrarCita} />
           </div>
         </div>
         <div className="row mt-4 justify-content-center">
