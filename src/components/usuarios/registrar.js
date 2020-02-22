@@ -31,7 +31,7 @@ export default class Registrar extends Component {
 
   resetForm() {
     const keys = Object.keys(this.state);
-    keys.map(key => {
+    keys.forEach(key => {
       this.setState({ [key]: "" });
     });
   }

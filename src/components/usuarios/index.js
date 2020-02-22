@@ -48,7 +48,8 @@ export default class Usuarios extends Component {
         </div>
         <div className="row mt-4 justify-content-center">
           <div className="col">
-            <Listado citas={this.state.citas} />
+            <h3 className="text-center">Listado de Citas</h3>
+            <Listado citas={this.state.citas} eliminar={this.cancelarCita}/>
           </div>
         </div>
       </div>
