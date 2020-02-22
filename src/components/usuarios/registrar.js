@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import moment from "moment";
+import ErrorValidation from "./validation";
 export default class Registrar extends Component {
   constructor(props) {
     super(props);
@@ -12,7 +13,8 @@ export default class Registrar extends Component {
       nombre: "Test",
       apellido: "Example",
       fecha,
-      hora
+      hora,
+      error: {}
     };
   }
 
@@ -24,6 +26,14 @@ export default class Registrar extends Component {
 
   onSubmit = e => {
     e.preventDefault();
+    if (this.state.nombre === "") {
+      this.setState({
+        error: {
+          nombre: "Este campo es obligatorio"
+        }
+      });
+      return;
+    }
     const cita = { ...this.state };
     this.props.registrarCita(cita);
     this.resetForm();
@@ -37,6 +47,7 @@ export default class Registrar extends Component {
   }
 
   render() {
+    const errors = this.state.error ? this.state.error : {};
     return (
       <div className="card">
         <div className="card-header">
@@ -44,6 +55,7 @@ export default class Registrar extends Component {
         </div>
 
         <div className="card-body">
+          <ErrorValidation errors={errors} />
           <form className="" onSubmit={this.onSubmit}>
             <div className="form-group">
               <label htmlFor="dni">DNI</label>
@@ -66,7 +78,6 @@ export default class Registrar extends Component {
                   name="nombre"
                   value={this.state.nombre}
                   onChange={this.onChange}
-                  required
                 />
               </div>
               <div className="form-group col-md-6">
