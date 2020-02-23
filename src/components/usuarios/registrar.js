@@ -9,31 +9,31 @@ export default class Registrar extends Component {
     const hora = moment().format("HH:mm");
 
     this.state = {
-      dni: 'Kristian',
-      apellidos: 'Ccahui',
-      nombres: 'Kristian',
+      dni: "Kristian",
+      apellidos: "Ccahui",
+      nombres: "Kristian",
       fecha,
       hora,
       submit: false,
       inputs: {
         dni: {
-          name: 'dni',
+          name: "dni"
         },
         nombres: {
-          name:'nombres',
+          name: "nombres"
         },
         apellidos: {
-          name:'apellidos',
+          name: "apellidos"
         },
         fecha: {
-          name:'fecha',
-          type: 'date'
+          name: "fecha",
+          type: "date"
         },
         hora: {
-          name: 'hora',
-          type:'time'
+          name: "hora",
+          type: "time"
         }
-      },
+      }
     };
   }
 
@@ -50,24 +50,47 @@ export default class Registrar extends Component {
   }
   onSubmit = e => {
     e.preventDefault();
-   
-     const cita = { ...this.state };
-    this.props.registrarCita(cita);
-    this.resetForm();
+
+    if (this.validarFormulario()){
+      const { inputs, submit, ...cita } = this.state; 
+      this.props.registrarCita(cita);
+      this.resetForm();
+      this.setState({ submit: false });
+    }  else {
+      this.setState({ submit: true });
+    }
+    
   };
+
+  validarFormulario() {
+    const { inputs, submit, ...cita } = this.state;
+    const keys = Object.keys(cita);
+
+    for (const key of keys) {
+      if(cita[key] === '')
+      return false;
+    }
+    return true;
+  }
 
   resetForm() {
     //Obtengo los values de los Inputs en un objeto
-    const {inputs, submit, ...cita} = this.state;
+    const { inputs, submit, ...cita } = this.state;
     const keys = Object.keys(cita);
     keys.forEach(key => {
-         this.setState({ [key]: "" });
+      this.setState({ [key]: "" });
     });
   }
 
+  isValid(name) {
+    if (this.state.submit && this.state[name] === "") {
+      return false;
+    }
+    return true;
+  }
 
   render() {
-  const inputs = this.state.inputs;    
+    const inputs = this.state.inputs;
     return (
       <div className="card">
         <div className="card-header">
@@ -81,6 +104,10 @@ export default class Registrar extends Component {
                 input={inputs.dni}
                 onChange={this.onChange}
                 value={this.state.dni}
+                error={{
+                  isValid: this.isValid(inputs.dni.name),
+                  message: "Campo Requerido"
+                }}
               />
             </div>
             <div className="form-row">
@@ -88,16 +115,40 @@ export default class Registrar extends Component {
                 input={inputs.nombres}
                 onChange={this.onChange}
                 value={this.state.nombres}
+                error={{
+                  isValid: this.isValid(inputs.nombres.name),
+                  message: "Campo Requerido"
+                }}
               />
               <InputFormValidate
                 input={inputs.apellidos}
                 onChange={this.onChange}
                 value={this.state.apellidos}
+                error={{
+                  isValid: this.isValid(inputs.apellidos.name),
+                  message: "Campo Requerido"
+                }}
               />
             </div>
             <div className="form-row">
-              <InputFormValidate input={inputs.fecha} onChange={this.onChange} value={this.state.fecha}></InputFormValidate>
-              <InputFormValidate input={inputs.hora} onChange={this.onChange} value={this.state.hora}></InputFormValidate>
+              <InputFormValidate
+                input={inputs.fecha}
+                onChange={this.onChange}
+                value={this.state.fecha}
+                error={{
+                  isValid: this.isValid(inputs.fecha.name),
+                  message: "Campo Requerido"
+                }}
+              ></InputFormValidate>
+              <InputFormValidate
+                input={inputs.hora}
+                onChange={this.onChange}
+                value={this.state.hora}
+                error={{
+                  isValid: this.isValid(inputs.hora.name),
+                  message: "Campo Requerido"
+                }}
+              ></InputFormValidate>
             </div>
             <button type="submit" className="btn btn-primary btn-block">
               Registrar
@@ -114,25 +165,22 @@ class InputFormValidate extends Component {
     const input = this.props.input;
     const value = this.props.value;
 
-    const inputError = {
-      isValid: true,
-      message: "Campo requerido"
-    };
-    
+    const error = this.props.error;
+
     return (
       <div className="form-group col">
         <label htmlFor={input.name} className="text-capitalize">
           {input.name}
         </label>
         <input
-          type={input.type ? input.type : 'text'}
-          className="form-control"
+          type={input.type ? input.type : "text"}
+          className={"form-control " + (error.isValid ? "" : "is-invalid")}
           id={input.name}
           name={input.name}
           onChange={this.props.onChange}
           value={value}
         />
-        <div className="invalid-feedback">{inputError.message}</div>
+        <div className="invalid-feedback">{error.message}</div>
       </div>
     );
   }
