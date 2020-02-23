@@ -59,24 +59,24 @@ export default class Usuarios extends Component {
 const CITAS = [
   {
     id: '1',
-    nombre: "Kristian",
-    apellido: "Cahui",
+    nombres: "Kristian",
+    apellidos: "Cahui",
     dni: "85122132",
     fecha: '25-02-20',
     hora: '9:30 am'
   },
   {
     id: '2',
-    nombre: "Juan",
-    apellido: "Jose",
+    nombres: "Juan",
+    apellidos: "Jose",
     dni: "99122132",
     fecha: '28-02-20',
     hora: '10:30 am'
   },
   {
     id: '3',
-    nombre: "Kristian",
-    apellido: "Cahui",
+    nombres: "Kristian",
+    apellidos: "Cahui",
     dni: "05122132",
     fecha: '29-02-20',
     hora: '7:30 am'

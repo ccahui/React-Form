@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import moment from "moment";
-import ErrorValidation from "./validation";
+
 export default class Registrar extends Component {
   constructor(props) {
     super(props);
@@ -9,12 +9,31 @@ export default class Registrar extends Component {
     const hora = moment().format("HH:mm");
 
     this.state = {
-      dni: "62295428",
-      nombre: "Test",
-      apellido: "Example",
+      dni: 'Kristian',
+      apellidos: 'Ccahui',
+      nombres: 'Kristian',
       fecha,
       hora,
-      error: {}
+      submit: false,
+      inputs: {
+        dni: {
+          name: 'dni',
+        },
+        nombres: {
+          name:'nombres',
+        },
+        apellidos: {
+          name:'apellidos',
+        },
+        fecha: {
+          name:'fecha',
+          type: 'date'
+        },
+        hora: {
+          name: 'hora',
+          type:'time'
+        }
+      },
     };
   }
 
@@ -24,30 +43,31 @@ export default class Registrar extends Component {
     this.setState({ [name]: value });
   };
 
+  validateFormulario() {
+    const { dni, nombre, apellido, fecha, hora } = this.state;
+    if (dni && nombre && apellido && fecha && hora) return true;
+    return false;
+  }
   onSubmit = e => {
     e.preventDefault();
-    if (this.state.nombre === "") {
-      this.setState({
-        error: {
-          nombre: "Este campo es obligatorio"
-        }
-      });
-      return;
-    }
-    const cita = { ...this.state };
+   
+     const cita = { ...this.state };
     this.props.registrarCita(cita);
     this.resetForm();
   };
 
   resetForm() {
-    const keys = Object.keys(this.state);
+    //Obtengo los values de los Inputs en un objeto
+    const {inputs, submit, ...cita} = this.state;
+    const keys = Object.keys(cita);
     keys.forEach(key => {
-      this.setState({ [key]: "" });
+         this.setState({ [key]: "" });
     });
   }
 
+
   render() {
-    const errors = this.state.error ? this.state.error : {};
+  const inputs = this.state.inputs;    
     return (
       <div className="card">
         <div className="card-header">
@@ -55,74 +75,64 @@ export default class Registrar extends Component {
         </div>
 
         <div className="card-body">
-          <ErrorValidation errors={errors} />
           <form className="" onSubmit={this.onSubmit}>
-            <div className="form-group">
-              <label htmlFor="dni">DNI</label>
-              <input
-                type="text"
-                className="form-control"
-                id="dni"
-                name="dni"
+            <div className="form-row">
+              <InputFormValidate
+                input={inputs.dni}
                 onChange={this.onChange}
-                required
                 value={this.state.dni}
               />
             </div>
             <div className="form-row">
-              <div className="form-group col-md-6">
-                <label htmlFor="nombre">Nombre</label>
-                <input
-                  className="form-control"
-                  id="nombre"
-                  name="nombre"
-                  value={this.state.nombre}
-                  onChange={this.onChange}
-                />
-              </div>
-              <div className="form-group col-md-6">
-                <label htmlFor="apellido">Apellido</label>
-                <input
-                  className="form-control"
-                  id="apellido"
-                  name="apellido"
-                  value={this.state.apellido}
-                  onChange={this.onChange}
-                  required
-                />
-              </div>
-            </div>{" "}
+              <InputFormValidate
+                input={inputs.nombres}
+                onChange={this.onChange}
+                value={this.state.nombres}
+              />
+              <InputFormValidate
+                input={inputs.apellidos}
+                onChange={this.onChange}
+                value={this.state.apellidos}
+              />
+            </div>
             <div className="form-row">
-              <div className="form-group col-md-6">
-                <label htmlFor="fecha">Fecha</label>
-                <input
-                  className="form-control"
-                  id="fecha"
-                  type="date"
-                  name="fecha"
-                  value={this.state.fecha}
-                  onChange={this.onChange}
-                  required
-                />
-              </div>
-              <div className="form-group col-md-6">
-                <label htmlFor="dia">Hora</label>
-                <input
-                  className="form-control"
-                  id="dia"
-                  type="time"
-                  name="hora"
-                  value={this.state.hora}
-                  onChange={this.onChange}
-                  required
-                />
-              </div>
+              <InputFormValidate input={inputs.fecha} onChange={this.onChange} value={this.state.fecha}></InputFormValidate>
+              <InputFormValidate input={inputs.hora} onChange={this.onChange} value={this.state.hora}></InputFormValidate>
             </div>
             <button type="submit" className="btn btn-primary btn-block">
               Registrar
             </button>
           </form>
         </div>
+      </div>
+    );
+  }
+}
+
+class InputFormValidate extends Component {
+  render() {
+    const input = this.props.input;
+    const value = this.props.value;
+
+    const inputError = {
+      isValid: true,
+      message: "Campo requerido"
+    };
+    
+    return (
+      <div className="form-group col">
+        <label htmlFor={input.name} className="text-capitalize">
+          {input.name}
+        </label>
+        <input
+          type={input.type ? input.type : 'text'}
+          className="form-control"
+          id={input.name}
+          name={input.name}
+          onChange={this.props.onChange}
+          value={value}
+        />
+        <div className="invalid-feedback">{inputError.message}</div>
       </div>
     );
   }

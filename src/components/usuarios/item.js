@@ -12,8 +12,8 @@ export default class Item extends Component {
               <td>
                 {cita.dni}
               </td>
-              <td>{cita.apellido}</td>
-              <td>{cita.nombre}</td>
+              <td>{cita.apellidos}</td>
+              <td>{cita.nombres}</td>
               <td>{cita.fecha}</td>
               <td>{cita.hora}</td>
               <td className="text-center">
