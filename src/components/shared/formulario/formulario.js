@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { ButtonLoading } from "./button";
-import { InputForm, InputFormInvalidate } from "./inputs";
+import { InputForm } from "./inputs";
+import { SelectForm } from "./selected";
 
 export class Formulario extends Component {
-  
-  isValid(name) {
+  isFieldValido(name) {
     const errors = this.props.errors;
     if (errors[name]) {
       return false;
@@ -20,15 +20,19 @@ export class Formulario extends Component {
       onChange,
       value: values[name]
     };
-    if (this.isValid(name)) {
-      return <InputForm {...props} />;
-    } else {
+
+    if (!this.isFieldValido(name)) {
       const error = errors[name];
       props["error"] = error;
-      return <InputFormInvalidate {...props} />;
+    }
+    
+    switch (field.type) {
+      case "select":
+        return <SelectForm {...props} />;
+      default:
+        return <InputForm {...props} />;
     }
   }
-
   render() {
     const { fields, onSubmit, cargando } = this.props;
     return (
@@ -45,4 +49,3 @@ export class Formulario extends Component {
     );
   }
 }
-

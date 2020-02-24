@@ -5,21 +5,20 @@ import { Formulario } from "../shared";
 export default class Registrar extends Component {
   constructor(props) {
     super(props);
-
-    const fecha = moment().format("YYYY-MM-DD");
-    const hora = moment().format("HH:mm");
-
     this.state = {
-      cita: {
-        dni: "Kristian",
-        apellidos: "Ccahui",
-        nombres: "Kristian",
-        fecha,
-        hora,
-      },
+      cita: this.iniciarStateCita(),
       errors: {},
       cargando: false
     };
+    this.iniciarStateCita();
+  }
+  iniciarStateCita(){
+    const names = FIELDS_CITA.map(field => field.name);
+    const cita = {};
+    names.forEach(name=>{
+      cita[name] = '';
+    })
+    return cita;
   }
 
   onChange = e => {
@@ -28,9 +27,9 @@ export default class Registrar extends Component {
     this.setStateCita(name, value);
   };
 
-  setStateCita(name, value){
+  setStateCita(name, value) {
     const cita = this.state.cita;
-    this.setState({ cita: { ...cita, [name]: value}});
+    this.setState({ cita: { ...cita, [name]: value } });
   }
 
   formValue() {
@@ -38,35 +37,22 @@ export default class Registrar extends Component {
   }
 
   validateFormulario() {
-    const { dni, nombres, apellidos, fecha, hora } = this.formValue();
-
     let errors = {};
+    const object = this.formValue();
+    let isValido = true;
     
-
-    if (!dni) {
-      errors["dni"] = "DNI es requerido";
-    }
-
-    if (!nombres) {
-      errors["nombres"] = "nombres es requerido";
-    }
-
-    if (!apellidos) {
-      errors["apellidos"] = "apellidos es requerido";
-    }
-
-    if (!fecha) {
-      errors["fecha"] = "fecha es requerido";
-    }
-
-    if (!hora) {
-      errors["hora"] = "hora es requerido";
-    }
+    Object.keys(object).forEach((name) =>{
+        if(object[name] ===""){
+         isValido = false;
+          errors[name]=`${name} es requerido`;
+        }
+    });
 
     this.setState({ errors });
-    return dni && nombres && fecha && apellidos && hora;
+    return isValido;
   }
   
+
   onSubmit = e => {
     e.preventDefault();
     this.setState({ cargando: true });
@@ -82,7 +68,7 @@ export default class Registrar extends Component {
   };
 
   resetForm() {
-    const formValue= this.formValue();
+    const formValue = this.formValue();
     const keys = Object.keys(formValue);
     keys.forEach(key => {
       this.setStateCita(key, "");
@@ -90,24 +76,23 @@ export default class Registrar extends Component {
   }
 
   render() {
-
     const values = this.formValue();
-    const {errors, cargando } = this.state;
+    const { errors, cargando } = this.state;
     const props = {
       fields: FIELDS_CITA,
-       onSubmit: this.onSubmit,
-       onChange: this.onChange,
-       values,
-       errors,
+      onSubmit: this.onSubmit,
+      onChange: this.onChange,
+      values,
+      errors,
       cargando
-    }
+    };
     return (
       <div className="card">
         <div className="card-header">
           <h5 className="card-title mb-0">Registrar Usuario</h5>
         </div>
         <div className="card-body">
-          <Formulario {...props}/>
+          <Formulario {...props} />
         </div>
       </div>
     );
@@ -134,5 +119,15 @@ const FIELDS_CITA = [
   {
     name: "hora",
     type: "time"
+  },
+  {
+    name: "seleccionar",
+    type: "select",
+    values: ["Opcion 01", "Opcion 02", "Opcion 03"]
+  },
+  {
+    name: "sexo",
+    type: "select",
+    values: ["masculino","femenino"]
   }
 ];

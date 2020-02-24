@@ -2,6 +2,16 @@ import React, { Component } from "react";
 
 export class InputForm extends Component {
   render() {
+    const { error } = this.props;
+    if(error){
+      return <InputFormInvalidate {...this.props}/> 
+    }
+    else return<InputFormValidate {...this.props}/>;
+  }
+}
+
+export class InputFormValidate extends Component {
+  render() {
     const { field, value, onChange } = this.props;
 
     return (
