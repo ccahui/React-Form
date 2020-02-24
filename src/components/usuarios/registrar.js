@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import moment from "moment";
+import { InputForm, InputFormInvalidate, ButtonLoading } from "../shared";
 
 export default class Registrar extends Component {
   constructor(props) {
@@ -14,26 +15,8 @@ export default class Registrar extends Component {
       nombres: "Kristian",
       fecha,
       hora,
-      submit: false,
-      inputs: {
-        dni: {
-          name: "dni"
-        },
-        nombres: {
-          name: "nombres"
-        },
-        apellidos: {
-          name: "apellidos"
-        },
-        fecha: {
-          name: "fecha",
-          type: "date"
-        },
-        hora: {
-          name: "hora",
-          type: "time"
-        }
-      }
+      errors: {},
+      cargando: false
     };
   }
 
@@ -43,54 +26,94 @@ export default class Registrar extends Component {
     this.setState({ [name]: value });
   };
 
+  formValue() {
+    const {errors, cargando, ...values } = this.state;
+    return values;
+  }
+
   validateFormulario() {
-    const { dni, nombre, apellido, fecha, hora } = this.state;
-    if (dni && nombre && apellido && fecha && hora) return true;
-    return false;
+    const { dni, nombres, apellidos, fecha, hora } = this.formValue();
+
+    let errors = {};
+
+    if (!dni) {
+      errors["dni"] = "DNI es requerido";
+    }
+
+    if (!nombres) {
+      errors["nombres"] = "nombres es requerido";
+    }
+
+    if (!apellidos) {
+      errors["apellidos"] = "apellidos es requerido";
+    }
+
+    if (!fecha) {
+      errors["fecha"] = "fecha es requerido";
+    }
+
+    if (!hora) {
+      errors["hora"] = "hora es requerido";
+    }
+
+    this.setState({ errors });
+    return dni && nombres && fecha && apellidos && hora;
   }
   onSubmit = e => {
     e.preventDefault();
-
-    if (this.validarFormulario()){
-      const { inputs, submit, ...cita } = this.state; 
-      this.props.registrarCita(cita);
-      this.resetForm();
-      this.setState({ submit: false });
-    }  else {
-      this.setState({ submit: true });
-    }
-    
+    this.setState({ cargando: true });
+    this.setState({ errors: {} });
+    setTimeout(() => {
+      if (this.validateFormulario()) {
+        const data = this.formValue();
+        this.props.registrarCita(data);
+        this.resetForm();
+      }
+      this.setState({ cargando: false });
+    }, 1000);
   };
 
-  validarFormulario() {
-    const { inputs, submit, ...cita } = this.state;
-    const keys = Object.keys(cita);
-
-    for (const key of keys) {
-      if(cita[key] === '')
-      return false;
-    }
-    return true;
-  }
-
   resetForm() {
-    //Obtengo los values de los Inputs en un objeto
-    const { inputs, submit, ...cita } = this.state;
-    const keys = Object.keys(cita);
+    const formValue= this.formValue();
+    const keys = Object.keys(formValue);
     keys.forEach(key => {
       this.setState({ [key]: "" });
     });
   }
 
   isValid(name) {
-    if (this.state.submit && this.state[name] === "") {
+    const errors = this.state.errors;
+    if (errors[name]) {
       return false;
     }
     return true;
   }
 
+  renderInput(field) {
+    const name = field.name; 
+    const props = {
+      field,
+      onChange: this.onChange,
+      value: this.state[name]
+    };
+    if (this.isValid(name)) {
+      return (
+        <InputForm
+          { ...props}
+        />
+      );
+    } else {
+      const error = this.state.errors[name];
+      props['error'] = error;
+      return (
+        <InputFormInvalidate
+          { ...props}
+        />
+      );
+    }
+  }
+
   render() {
-    const inputs = this.state.inputs;
     return (
       <div className="card">
         <div className="card-header">
@@ -99,60 +122,10 @@ export default class Registrar extends Component {
 
         <div className="card-body">
           <form className="" onSubmit={this.onSubmit}>
-            <div className="form-row">
-              <InputFormValidate
-                input={inputs.dni}
-                onChange={this.onChange}
-                value={this.state.dni}
-                error={{
-                  isValid: this.isValid(inputs.dni.name),
-                  message: "Campo Requerido"
-                }}
-              />
-            </div>
-            <div className="form-row">
-              <InputFormValidate
-                input={inputs.nombres}
-                onChange={this.onChange}
-                value={this.state.nombres}
-                error={{
-                  isValid: this.isValid(inputs.nombres.name),
-                  message: "Campo Requerido"
-                }}
-              />
-              <InputFormValidate
-                input={inputs.apellidos}
-                onChange={this.onChange}
-                value={this.state.apellidos}
-                error={{
-                  isValid: this.isValid(inputs.apellidos.name),
-                  message: "Campo Requerido"
-                }}
-              />
-            </div>
-            <div className="form-row">
-              <InputFormValidate
-                input={inputs.fecha}
-                onChange={this.onChange}
-                value={this.state.fecha}
-                error={{
-                  isValid: this.isValid(inputs.fecha.name),
-                  message: "Campo Requerido"
-                }}
-              ></InputFormValidate>
-              <InputFormValidate
-                input={inputs.hora}
-                onChange={this.onChange}
-                value={this.state.hora}
-                error={{
-                  isValid: this.isValid(inputs.hora.name),
-                  message: "Campo Requerido"
-                }}
-              ></InputFormValidate>
-            </div>
-            <button type="submit" className="btn btn-primary btn-block">
-              Registrar
-            </button>
+              {formCitaFields.map((field, index) => {
+                return (<div key={index} className="form-row">{this.renderInput(field)} </div>);
+              })}
+            <ButtonLoading cargando={this.state.cargando} />
           </form>
         </div>
       </div>
@@ -160,28 +133,25 @@ export default class Registrar extends Component {
   }
 }
 
-class InputFormValidate extends Component {
-  render() {
-    const input = this.props.input;
-    const value = this.props.value;
-
-    const error = this.props.error;
-
-    return (
-      <div className="form-group col">
-        <label htmlFor={input.name} className="text-capitalize">
-          {input.name}
-        </label>
-        <input
-          type={input.type ? input.type : "text"}
-          className={"form-control " + (error.isValid ? "" : "is-invalid")}
-          id={input.name}
-          name={input.name}
-          onChange={this.props.onChange}
-          value={value}
-        />
-        <div className="invalid-feedback">{error.message}</div>
-      </div>
-    );
+const formCitaFields = [
+  {
+    name: "dni",
+    type: "text"
+  },
+  {
+    name: "nombres",
+    type: "text"
+  },
+  {
+    name: "apellidos",
+    type: "text"
+  },
+  {
+    name: "fecha",
+    type: "date"
+  },
+  {
+    name: "hora",
+    type: "time"
   }
-}
+];
