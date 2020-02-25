@@ -96,12 +96,11 @@ export default class Registrar extends Component {
       values,
       errors,
       cargando,
-      titulo: 'Registrar'
     };
     return (
       <div className="card">
         <div className="card-header">
-          <h5 className="card-title mb-0">Registrar Usuario</h5>
+          <h5 className="card-title mb-0">Registrar</h5>
         </div>
         <div className="card-body">
           <Formulario {...props} />

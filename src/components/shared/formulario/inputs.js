@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { inputProptype, inputInvalidateProptype } from "../../models/formulario";
 
 export class InputForm extends Component {
   render() {
@@ -54,3 +55,7 @@ export class InputFormInvalidate extends Component {
     );
   }
 }
+
+InputForm.propTypes = inputProptype;
+InputFormValidate.propTypes = inputProptype;
+InputFormInvalidate.propTypes = inputInvalidateProptype;

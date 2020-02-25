@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { ButtonLoading } from "./button";
 import { InputForm } from "./inputs";
 import { SelectForm } from "./selected";
+import { formularioProptype } from "../../models/formulario";
 
 export class Formulario extends Component {
   isFieldValido(name) {
@@ -49,3 +50,5 @@ export class Formulario extends Component {
     );
   }
 }
+
+Formulario.propTypes = formularioProptype;

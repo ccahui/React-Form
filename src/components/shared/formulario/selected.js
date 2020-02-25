@@ -1,4 +1,9 @@
 import React, { Component } from "react";
+import {
+  selectProptype,
+  selectInvalidateProptype,
+  optionsProptype
+} from "../../models/formulario";
 
 export class SelectForm extends Component {
   render() {
@@ -24,7 +29,7 @@ export class SelectFormValido extends Component {
           name={field.name}
           onChange={onChange}
         >
-          <Options values={field.values}/>
+          <Options values={field.values} />
         </select>
       </div>
     );
@@ -46,26 +51,31 @@ export class SelectFormInvalidate extends Component {
           name={field.name}
           onChange={onChange}
         >
-          <Options values={field.values}/>
+          <Options values={field.values} />
         </select>
         <div className="invalid-feedback text-capitalize">{error}</div>
       </div>
     );
   }
 }
-function Options(props) {
-  
-  const values = props.values;
-  return (
-    <>
-      <option value="">-- Seleccionar---</option>
-      {values.map((option, index) => {
-        return (
-          <option key={index} value={option} className="text-capitalize">
-            {option}
-          </option>
-        );
-      })}
-    </>
-  );
+class Options extends Component {
+  render() {
+    const values = this.props.values;
+    return (
+      <>
+        <option value="">-- Seleccionar---</option>
+        {values.map((option, index) => {
+          return (
+            <option key={index} value={option} className="text-capitalize">
+              {option}
+            </option>
+          );
+        })}
+      </>
+    );
+  }
 }
+
+SelectForm.propTypes = selectProptype;
+SelectFormInvalidate.propTypes = selectInvalidateProptype;
+Options.propTypes = optionsProptype;
