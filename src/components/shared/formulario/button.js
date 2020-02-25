@@ -21,6 +21,7 @@ export class ButtonLoading extends Component {
   }
 }
 
+
 ButtonLoading.defaultProps = {
   cargando: false,
   value: "Guardar"

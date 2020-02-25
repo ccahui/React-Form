@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import moment from "moment";
 import { Formulario } from "../shared";
 
 export default class Registrar extends Component {
@@ -8,7 +7,8 @@ export default class Registrar extends Component {
     this.state = {
       cita: this.iniciarStateCita(),
       errors: {},
-      cargando: false
+      cargando: false,
+      fields: FIELDS_CITA
     };
     this.iniciarStateCita();
   }
@@ -74,17 +74,29 @@ export default class Registrar extends Component {
       this.setStateCita(key, "");
     });
   }
+  setStateFieldsSelect(name, values){
+    const {fields } = this.state;
+
+    const filedsNew = fields.map(field=>{
+      if(field.type === 'select' && field.name === name){
+          return {...field, values}
+      }
+      return field;
+    });
+    this.setState({fields: filedsNew})
+  }
 
   render() {
     const values = this.formValue();
-    const { errors, cargando } = this.state;
+    const { errors, cargando, fields } = this.state;
     const props = {
-      fields: FIELDS_CITA,
+      fields,
       onSubmit: this.onSubmit,
       onChange: this.onChange,
       values,
       errors,
-      cargando
+      cargando,
+      titulo: 'Registrar'
     };
     return (
       <div className="card">
@@ -121,13 +133,8 @@ const FIELDS_CITA = [
     type: "time"
   },
   {
-    name: "seleccionar",
+    name: "Tipo",
     type: "select",
-    values: ["Opcion 01", "Opcion 02", "Opcion 03"]
+    values: ["Familiar", "General"]
   },
-  {
-    name: "sexo",
-    type: "select",
-    values: ["masculino","femenino"]
-  }
 ];
